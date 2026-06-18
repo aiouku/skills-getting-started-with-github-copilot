@@ -41,6 +41,46 @@ activities = {
     }
 }
 
+# Additional activities: sports, artistic, and intellectual
+activities.update({
+    "Soccer Club": {
+        "description": "Team soccer practice and inter-school matches",
+        "schedule": "Tuesdays and Thursdays, 4:00 PM - 5:30 PM",
+        "max_participants": 22,
+        "participants": []
+    },
+    "Swimming Team": {
+        "description": "Swim training and competitions for all levels",
+        "schedule": "Mondays and Wednesdays, 5:00 PM - 6:30 PM",
+        "max_participants": 16,
+        "participants": []
+    },
+    "Drama Club": {
+        "description": "Acting workshops and school play production",
+        "schedule": "Wednesdays, 3:30 PM - 5:00 PM",
+        "max_participants": 25,
+        "participants": []
+    },
+    "Art Workshop": {
+        "description": "Painting, drawing, and mixed media sessions",
+        "schedule": "Fridays, 3:30 PM - 5:00 PM",
+        "max_participants": 18,
+        "participants": []
+    },
+    "Robotics Club": {
+        "description": "Build and program robots; participate in competitions",
+        "schedule": "Thursdays, 4:00 PM - 6:00 PM",
+        "max_participants": 12,
+        "participants": []
+    },
+    "Debate Team": {
+        "description": "Practice public speaking and competitive debating",
+        "schedule": "Mondays, 3:30 PM - 4:30 PM",
+        "max_participants": 20,
+        "participants": []
+    }
+})
+
 
 @app.get("/")
 def root():
@@ -62,6 +102,16 @@ def signup_for_activity(activity_name: str, email: str):
     # Get the specific activity
     activity = activities[activity_name]
 
+    # Prevent duplicate signups
+    if email in activity["participants"]:
+        raise HTTPException(status_code=400, detail="Student already signed up for this activity")
+
+    # Prevent exceeding max participants
+    if len(activity["participants"]) >= activity.get("max_participants", float("inf")):
+        raise HTTPException(status_code=400, detail="Activity is full")
+
+    # Validate student is not already signed up
+    
     # Add student
     activity["participants"].append(email)
     return {"message": f"Signed up {email} for {activity_name}"}
